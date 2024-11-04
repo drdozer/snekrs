@@ -5,6 +5,7 @@
 - Power-ups or special food types
 - Multiple game modes
 - Two-player mode (WASD vs Arrow keys)
+- Networking multiplayer mode
 - Visual effects (collision, scoring)
 - Sound effects
 
@@ -19,8 +20,10 @@
 - Build optimization
 
 ## Code Organization
-- Split into modules
-- Separate UI from game logic
-- Better state management
-- Configuration structure
-- Custom error types
+- Split into modules?
+- Separate UI from game logic?
+- Update test assertions with clear messages
+- Refactor tests to be more clearly assocaited with the code they are testing
+
+## Blue Sky
+- Turn the codebase into a tutorial for implementing the application (literate programming?)
