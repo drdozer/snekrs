@@ -1,0 +1,11 @@
+[package]
+name = "snekrs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28.1"
+log = "0.4.22"
+rand = "0.8.5"
+ratatui = "0.29.0"
+simplelog = "0.12.2"
