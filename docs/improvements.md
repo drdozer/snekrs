@@ -22,7 +22,6 @@
 ## Code Organization
 - Split into modules?
 - Separate UI from game logic?
-- Update test assertions with clear messages
 - Refactor tests to be more clearly assocaited with the code they are testing
 
 ## Blue Sky

@@ -570,16 +570,16 @@ mod tests {
     #[test]
     fn test_opposite_directions() {
         // Test direct opposites
-        assert_eq!(Direction::North.opposite(), Direction::South);
-        assert_eq!(Direction::South.opposite(), Direction::North);
-        assert_eq!(Direction::East.opposite(), Direction::West);
-        assert_eq!(Direction::West.opposite(), Direction::East);
+        assert_eq!(Direction::North.opposite(), Direction::South, "North should be opposite of South");
+        assert_eq!(Direction::South.opposite(), Direction::North, "South should be opposite of North");
+        assert_eq!(Direction::East.opposite(), Direction::West, "East should be opposite of West");
+        assert_eq!(Direction::West.opposite(), Direction::East, "West should be opposite of East");
 
         // Test double opposite returns to original for all directions
-        assert_eq!(Direction::North.opposite().opposite(), Direction::North);
-        assert_eq!(Direction::South.opposite().opposite(), Direction::South);
-        assert_eq!(Direction::East.opposite().opposite(), Direction::East);
-        assert_eq!(Direction::West.opposite().opposite(), Direction::West);
+        assert_eq!(Direction::North.opposite().opposite(), Direction::North, "Double opposite of North should return to North");
+        assert_eq!(Direction::South.opposite().opposite(), Direction::South, "Double opposite of South should return to South");
+        assert_eq!(Direction::East.opposite().opposite(), Direction::East, "Double opposite of East should return to East");
+        assert_eq!(Direction::West.opposite().opposite(), Direction::West, "Double opposite of West should return to West");
     }
 
     #[test]
@@ -592,16 +592,16 @@ mod tests {
         let pos = Pos { x: 5, y: 5 };
         let delta = PosDelta { x: 0, y: 0 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, pos);
+        assert_eq!(new_pos, pos, "Zero delta should not change position");
 
         // Test at boundaries too
         let pos = Pos { x: 0, y: 0 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, pos);
+        assert_eq!(new_pos, pos, "Zero delta should not change position at minimum bounds");
 
         let pos = Pos { x: 9, y: 9 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, pos);
+        assert_eq!(new_pos, pos, "Zero delta should not change position at maximum bounds");
     }
 
     #[test]
@@ -619,18 +619,18 @@ mod tests {
         // Moving exactly one arena width/height should return to the same position
         let delta = PosDelta { x: 10, y: 10 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, pos);
+        assert_eq!(new_pos, pos, "Moving by exact arena size should return to same position");
 
         // Moving exactly negative arena width/height should also return to same position
         let delta = PosDelta { x: -10, y: -10 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, pos);
+        assert_eq!(new_pos, pos, "Moving by negative arena size should return to same position");
 
         // Test with different x and y arena dimensions
         let pos = Pos { x: 3, y: 3 };
         let delta = PosDelta { x: 8, y: 6 };
-        let new_pos = pos.wrapped_add(delta, non_square_arena_size); // Non-square arena
-        assert_eq!(new_pos, pos);
+        let new_pos = pos.wrapped_add(delta, non_square_arena_size);
+        assert_eq!(new_pos, pos, "Moving by non-square arena dimensions should wrap correctly");
     }
 
     #[test]
@@ -643,17 +643,17 @@ mod tests {
         let pos = Pos { x: 5, y: 5 };
         let delta = PosDelta { x: 3, y: -3 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 8, y: 2 });
+        assert_eq!(new_pos, Pos { x: 8, y: 2 }, "Large delta should wrap correctly within arena bounds");
 
         // Test wrapping with large positive delta
         let delta = PosDelta { x: 8, y: 12 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 3, y: 7 }); // (5+8)%10=3, (5+12)%10=7
+        assert_eq!(new_pos, Pos { x: 3, y: 7 }, "Large positive delta should wrap: (5+8)%10=3, (5+12)%10=7");
 
         // Test wrapping with large negative delta
         let delta = PosDelta { x: -12, y: -8 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 3, y: 7 }); // (5-12)%10=3, (5-8)%10=7
+        assert_eq!(new_pos, Pos { x: 3, y: 7 }, "Large negative delta should wrap: (5-12)%10=3, (5-8)%10=7");
     }
 
     #[test]
@@ -664,10 +664,9 @@ mod tests {
         };
 
         let pos = Pos { x: 5, y: 5 };
-        // Test with deltas larger than arena size
-        let delta = PosDelta { x: 25, y: -15 }; // Multiple wraps
+        let delta = PosDelta { x: 25, y: -15 };
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 0, y: 0 }); // (5+25)%10=0, (5-15)%10=0
+        assert_eq!(new_pos, Pos { x: 0, y: 0 }, "Very large deltas should wrap multiple times: (5+25)%10=0, (5-15)%10=0");
     }
 
     #[test]
@@ -680,7 +679,7 @@ mod tests {
         let pos = Pos { x: 5, y: 5 };
         let delta: PosDelta = Direction::North.into();
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 5, y: 4 });
+        assert_eq!(new_pos, Pos { x: 5, y: 4 }, "Moving North should decrease y coordinate by 1");
     }
 
     #[test]
@@ -693,12 +692,12 @@ mod tests {
         let pos = Pos { x: 0, y: 0 };
         let delta: PosDelta = Direction::North.into();
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 0, y: 9 });
+        assert_eq!(new_pos, Pos { x: 0, y: 9 }, "Moving North from top should wrap to bottom");
 
         let pos = Pos { x: 0, y: 5 };
         let delta: PosDelta = Direction::West.into();
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 9, y: 5 });
+        assert_eq!(new_pos, Pos { x: 9, y: 5 }, "Moving West from left edge should wrap to right edge");
     }
 
     #[test]
@@ -711,12 +710,12 @@ mod tests {
         let pos = Pos { x: 9, y: 9 };
         let delta: PosDelta = Direction::South.into();
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 9, y: 0 });
+        assert_eq!(new_pos, Pos { x: 9, y: 0 }, "Moving South from bottom should wrap to top");
 
         let pos = Pos { x: 9, y: 5 };
         let delta: PosDelta = Direction::East.into();
         let new_pos = pos.wrapped_add(delta, arena_size);
-        assert_eq!(new_pos, Pos { x: 0, y: 5 });
+        assert_eq!(new_pos, Pos { x: 0, y: 5 }, "Moving East from right edge should wrap to left edge");
     }
 
     #[test]
@@ -730,19 +729,23 @@ mod tests {
 
         assert_eq!(
             pos.wrapped_add(Direction::North.into(), arena_size),
-            Pos { x: 5, y: 4 }
+            Pos { x: 5, y: 4 },
+            "Moving North should decrease y coordinate"
         );
         assert_eq!(
             pos.wrapped_add(Direction::South.into(), arena_size),
-            Pos { x: 5, y: 6 }
+            Pos { x: 5, y: 6 },
+            "Moving South should increase y coordinate"
         );
         assert_eq!(
             pos.wrapped_add(Direction::East.into(), arena_size),
-            Pos { x: 6, y: 5 }
+            Pos { x: 6, y: 5 },
+            "Moving East should increase x coordinate"
         );
         assert_eq!(
             pos.wrapped_add(Direction::West.into(), arena_size),
-            Pos { x: 4, y: 5 }
+            Pos { x: 4, y: 5 },
+            "Moving West should decrease x coordinate"
         );
     }
 
@@ -755,10 +758,10 @@ mod tests {
             pending_growth: 0,
         };
 
-        assert!(snek.would_collide_with_body(Pos { x: 5, y: 6 })); // First segment
-        assert!(snek.would_collide_with_body(Pos { x: 6, y: 7 })); // Last segment
-        assert!(!snek.would_collide_with_body(Pos { x: 5, y: 5 })); // Head position
-        assert!(!snek.would_collide_with_body(Pos { x: 4, y: 6 })); // Adjacent but not colliding
+        assert!(snek.would_collide_with_body(Pos { x: 5, y: 6 }), "Should detect collision with first body segment");
+        assert!(snek.would_collide_with_body(Pos { x: 6, y: 7 }), "Should detect collision with last body segment");
+        assert!(!snek.would_collide_with_body(Pos { x: 5, y: 5 }), "Head position should not count as body collision");
+        assert!(!snek.would_collide_with_body(Pos { x: 4, y: 6 }), "Adjacent position should not count as collision");
     }
 
     #[test]
@@ -771,19 +774,18 @@ mod tests {
         };
 
         let morsel = Morsel {
-            pos: Pos { x: 5, y: 4 }, // position doesn't matter for snacking
+            pos: Pos { x: 5, y: 4 },
             growth_value: 3,
         };
 
         snek.snack(morsel);
-        assert_eq!(snek.pending_growth, 3);
+        assert_eq!(snek.pending_growth, 3, "Snacking should set pending_growth to morsel's growth value");
 
-        // Test multiple snacks stack
         snek.snack(Morsel {
             pos: Pos { x: 0, y: 0 },
             growth_value: 2,
         });
-        assert_eq!(snek.pending_growth, 5);
+        assert_eq!(snek.pending_growth, 5, "Multiple snacks should accumulate pending_growth");
     }
 
     #[test]
@@ -793,24 +795,22 @@ mod tests {
             height: 10,
         };
 
-        // Test with odd length
         let snek = Snek::new(size, 3);
         println!("Odd length snek:");
         println!("  head: {:?}", snek.head);
         println!("  body: {:?}", snek.body);
 
-        // Convert body to Vec for easier inspection
         let body: Vec<_> = snek.body.iter().collect();
         println!("  body segments:");
         for (i, pos) in body.iter().enumerate() {
             println!("    segment {}: {:?}", i, pos);
         }
 
-        assert_eq!(snek.head, Pos { x: 6, y: 5 });
-        assert_eq!(snek.body.len(), 3);
-        assert_eq!(snek.body[0], Pos { x: 3, y: 5 }); // Leftmost segment
-        assert_eq!(snek.body[1], Pos { x: 4, y: 5 }); // Middle segment
-        assert_eq!(snek.body[2], Pos { x: 5, y: 5 }); // Rightmost segment
+        assert_eq!(snek.head, Pos { x: 6, y: 5 }, "Head should be positioned correctly for odd length snake");
+        assert_eq!(snek.body.len(), 3, "Body should have correct number of segments");
+        assert_eq!(snek.body[0], Pos { x: 3, y: 5 }, "Leftmost segment should be positioned correctly");
+        assert_eq!(snek.body[1], Pos { x: 4, y: 5 }, "Middle segment should be positioned correctly");
+        assert_eq!(snek.body[2], Pos { x: 5, y: 5 }, "Rightmost segment should be positioned correctly");
     }
 
     #[test]
@@ -821,7 +821,6 @@ mod tests {
         };
         let snek = Snek::new(size, 4);
 
-        // Debug output
         println!("Even length snek:");
         println!("  head: {:?}", snek.head);
         println!("  body: {:?}", snek.body);
@@ -830,14 +829,14 @@ mod tests {
             println!("    segment {}: {:?}", i, pos);
         }
 
-        assert_eq!(snek.head, Pos { x: 7, y: 5 }); // mid_x(5) + half_length(2)
-        assert_eq!(snek.body.len(), 4);
-        assert_eq!(snek.body[0], Pos { x: 3, y: 5 }); // leftmost
-        assert_eq!(snek.body[1], Pos { x: 4, y: 5 });
-        assert_eq!(snek.body[2], Pos { x: 5, y: 5 });
-        assert_eq!(snek.body[3], Pos { x: 6, y: 5 }); // rightmost
-        assert_eq!(snek.direction, Direction::East);
-        assert_eq!(snek.pending_growth, 0);
+        assert_eq!(snek.head, Pos { x: 7, y: 5 }, "Head should be positioned correctly for even length snake");
+        assert_eq!(snek.body.len(), 4, "Body should have correct number of segments");
+        assert_eq!(snek.body[0], Pos { x: 3, y: 5 }, "Leftmost segment should be positioned correctly");
+        assert_eq!(snek.body[1], Pos { x: 4, y: 5 }, "Second segment should be positioned correctly");
+        assert_eq!(snek.body[2], Pos { x: 5, y: 5 }, "Third segment should be positioned correctly");
+        assert_eq!(snek.body[3], Pos { x: 6, y: 5 }, "Rightmost segment should be positioned correctly");
+        assert_eq!(snek.direction, Direction::East, "Snake should start facing East");
+        assert_eq!(snek.pending_growth, 0, "Snake should start with no pending growth");
     }
 
     #[test]
@@ -849,17 +848,13 @@ mod tests {
         let mut snek = Snek::new(size, 3);
         println!("Starting snek: {:?}", snek);
 
-        // Record initial positions
         let initial_head = snek.head;
         let initial_body: Vec<Pos> = snek.body.iter().cloned().collect();
 
-        // Move once
         snek.slither(size);
 
         println!("Moved snek: {:?}", snek);
 
-        // Verify:
-        // 1. New head is one step east of old head
         assert_eq!(
             snek.head,
             Pos {
@@ -869,14 +864,12 @@ mod tests {
             "Head position should be one step east of old head"
         );
 
-        // 2. Old head is now last body segment
         assert_eq!(
             snek.body.back(),
             Some(&initial_head),
             "Old head is now the highest body segment"
         );
 
-        // 3. Middle segments moved up
         assert_eq!(
             initial_body[2], snek.body[1],
             "Middle segments moved up 2 to 1"
@@ -886,7 +879,6 @@ mod tests {
             "Middle segments moved up 1 to 0"
         );
 
-        // 4. Last body segment (tail) was removed
         assert_eq!(snek.body.len(), 3, "Length remained the same");
         assert!(!snek.body.contains(&initial_body[0]), "Tail was removed");
     }
@@ -899,14 +891,12 @@ mod tests {
         };
         let mut haus = SnekHaus::new(size, 3);
 
-        // Initial state should not be self-colliding
-        assert!(!haus.check_snek_hit_itself());
+        assert!(!haus.check_snek_hit_itself(), "New snake should not be in self-collision state");
 
-        // Create a situation where snake hits itself
-        // We'll need to manually create a snake in a self-colliding position
         haus.snek.body.push_back(haus.snek.head);
-        assert!(haus.check_snek_hit_itself());
+        assert!(haus.check_snek_hit_itself(), "Snake should detect collision when head overlaps with body");
     }
+
     #[test]
     fn test_nomming() {
         let size = Size {
@@ -915,23 +905,19 @@ mod tests {
         };
         let mut haus = SnekHaus::new(size, 3);
 
-        // Add a morsel where the snake head is
         let morsel = Morsel {
             pos: haus.snek.head,
             growth_value: 2,
         };
         haus.moresels.push(morsel);
 
-        // Should return the growth value when nomming occurs
-        assert_eq!(haus.check_nomming(), Some(2));
+        assert_eq!(haus.check_nomming(), Some(2), "Should return growth value when morsel is eaten");
 
-        // Verify effects of nomming
-        assert!(haus.moresels.is_empty());
-        assert_eq!(haus.score, 2);
-        assert_eq!(haus.snek.pending_growth, 2);
+        assert!(haus.moresels.is_empty(), "Morsel should be removed after eating");
+        assert_eq!(haus.score, 2, "Score should increase by morsel's growth value");
+        assert_eq!(haus.snek.pending_growth, 2, "Snake should gain pending growth from morsel");
 
-        // Should return None when no morsel present
-        assert_eq!(haus.check_nomming(), None);
+        assert_eq!(haus.check_nomming(), None, "Should return None when no morsel is present");
     }
 
     #[test]
@@ -942,7 +928,6 @@ mod tests {
         };
         let mut haus = SnekHaus::new(size, 3);
 
-        // Add multiple morsels, only one at head position
         let head_morsel = Morsel {
             pos: haus.snek.head,
             growth_value: 2,
@@ -955,9 +940,9 @@ mod tests {
         haus.moresels.push(head_morsel);
         haus.moresels.push(other_morsel);
 
-        assert_eq!(haus.check_nomming(), Some(2));
-        assert_eq!(haus.moresels.len(), 1); // Other morsel should remain
-        assert_eq!(haus.moresels[0].growth_value, 3); // Verify correct morsel remained
+        assert_eq!(haus.check_nomming(), Some(2), "Should return growth value of eaten morsel");
+        assert_eq!(haus.moresels.len(), 1, "Only the eaten morsel should be removed");
+        assert_eq!(haus.moresels[0].growth_value, 3, "Remaining morsel should be the uneaten one");
     }
 
     #[test]
@@ -968,13 +953,11 @@ mod tests {
         };
         let mut haus = SnekHaus::new(size, 3);
 
-        // Initial direction is North
         haus.change_direction(Direction::East);
-        assert_eq!(haus.snek.direction, Direction::East);
+        assert_eq!(haus.snek.direction, Direction::East, "Snake should change to valid new direction");
 
-        // Can't reverse direction
         haus.change_direction(Direction::West);
-        assert_eq!(haus.snek.direction, Direction::East);
+        assert_eq!(haus.snek.direction, Direction::East, "Snake should not be able to reverse direction");
     }
 
     #[test]
@@ -985,15 +968,13 @@ mod tests {
         };
         let mut haus = SnekHaus::new(size, 3);
 
-        // Valid placement
         let valid_morsel = Morsel {
             pos: Pos { x: 0, y: 0 },
             growth_value: 1,
         };
         haus.place_morsel(valid_morsel);
-        assert_eq!(haus.moresels.len(), 1);
+        assert_eq!(haus.moresels.len(), 1, "Valid morsel should be added to arena");
 
-        // Invalid placement should panic
         let invalid_morsel = Morsel {
             pos: haus.snek.head,
             growth_value: 1,
@@ -1001,6 +982,6 @@ mod tests {
         let result = std::panic::catch_unwind(move || {
             haus.place_morsel(invalid_morsel);
         });
-        assert!(result.is_err());
+        assert!(result.is_err(), "Placing morsel on snake head should panic");
     }
 }
